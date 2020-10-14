@@ -1,0 +1,6 @@
+---
+# vars file for android-sdk
+android-sdk:
+  prefs:
+    - { name: browser.tabs.warnOnClose, value: false }
+    - { name: geo.enabled,              value: false }

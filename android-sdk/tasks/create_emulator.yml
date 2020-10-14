@@ -16,7 +16,7 @@
     echo "no" | {{ tools_path }}/bin/avdmanager \
       --verbose create avd \
       --force \
-      --name "{{ emulator_name }}" \
-      --package "{{ system_image_name }}"
-      --tag "{{ system_tag }}" \
-      --abi "{{ system_abi }}"
+      --name {{ emulator_name }} \
+      --package "{{ system_image_name }}" \
+      --tag {{ system_tag }} \
+      --abi {{ system_abi }}

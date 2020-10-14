@@ -1,75 +1,8 @@
 ---
 # tasks file for android-sdk
 
-- name: "Check if java is installed"
-  shell: command -v java >/dev/null 2>&1
-  register: java_installed
-  ignore_errors: yes
+- include: install_android_sdk.yml
+  when: install_sdk == true
 
-- name: "Install Java"
-  become: yes
-  when: java_installed.rc != 0
-  apt:
-    name: "{{ java_install_package_name }}"
-    update_cache: yes
-
-- name: "Install specific Ubuntu packages for 64 bits"
-  become: yes
-  apt:
-    name: "{{item}}"
-    update_cache: yes
-  with_items:
-    - libc6
-    - libncurses5
-    - libstdc++6
-    - lib32z1
-    - libbz2-1.0
-    - unzip
-
-- name: Download Android SDK
-  get_url:
-    url: "{{ commandline_tools_url }}"
-    checksum: "{{ commandline_tools_checksum }}"
-    dest: /tmp/commandlinetools.zip
-
-- name: Make opt dir for user
-  become: yes
-  file:
-    path: "{{ tools_root }}"
-    state: directory
-    mode: 0777
-
-- name: Create Android SDK directory
-  file:
-    path: "{{ tools_unzip_dest }}"
-    state: directory
-    recurse: yes
-
-- name: Unpack Android SDK
-  unarchive:
-    copy: no
-    src: /tmp/commandlinetools.zip
-    dest: "{{ tools_unzip_dest }}"
-    creates: "{{ tools_path }}"
-
-- name: Install specific version of Android SDK packages
-  shell: yes | {{ tools_path }}/bin/sdkmanager "{{ item.name }};{{ item.version }}"
-  register: buildtools
-  with_items: "{{ android_sdk_packages }}"
-  when: item.version is defined
-
-- name: Install latest version of Android SDK packages
-  shell: bash -lc "yes | {{ tools_path }}/bin/sdkmanager \"{{ item.name }}\""
-  register: buildtools
-  with_items: "{{ android_sdk_packages }}"
-  when: item.version is not defined
-
-#- name: Configure Android SDK paths
-#  lineinfile:
-#    dest: /home/vagrant/.bashrc
-#    line: "{{ item }}"
-#  with_items:
-#    - 'export ANDROID_SDK_ROOT : {{ android_sdk_root }}'
-#    - 'export ANDROID_TOOLS: $ANDROID_SDK_ROOT /tools/'
-#    - 'export ANDROID_PLATFORM_TOOLS: $ANDROID_SDK_ROOT /platform-tools/'
-#    - 'export PATH: $PATH:$ANDROID_TOOLS:$ANDROID_PLATFORM_TOOLS'
+- include: create_emulator.yml
+  when: create_emulator == true

@@ -1,5 +1,8 @@
 ---
 # defaults file for android-sdk
+install_sdk: true
+create_emulator: true
+
 java_install_package_name: openjdk-9-jre
 
 # vars for the the tool install hierarchy:
@@ -14,9 +17,18 @@ tools_path: "{{ tools_unzip_dest }}/tools"
 commandline_tools_url: https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
 commandline_tools_checksum: "sha256:89f308315e041c93a37a79e0627c47f21d5c5edbe5e80ea8dc0aac8a649e0e92"
 
+# to create emulator from
+android_version: android-25
+system_tag: google_apis
+system_arch: arm64-v8a
+system_abi: "{{ system_tag }}/{{ system_arch }}"
+system_image_name: "system-images;{{ android_version }};{{ system_tag }};{{ system_arch }}"
+emulator_name: generic_10
+
 android_sdk_packages:
   - name: platforms
-    version: android-19
+    version: android-29
   - name: build-tools
     version: 22.0.1
   - name: platform-tools
+  - name: "{{ system_image_name }}"

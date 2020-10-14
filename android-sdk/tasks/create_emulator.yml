@@ -1,0 +1,22 @@
+---
+
+- name: Check if Already Created
+  shell: "{{ tools_path }}/bin/avdmanager list avd | grep 'Name: {{ emulator_name }}' >/dev/null 2>&1"
+  register: grep_emulator
+  ignore_errors: true
+
+- name: Debug Emulator Info
+  when: grep_emulator.rc == 0
+  debug:
+    msg: "Emulator with name {{ emulator_name }} already exists"
+
+- name: Create Emulator
+  when: grep_emulator.rc != 0
+  shell: |
+    echo "no" | {{ tools_path }}/bin/avdmanager \
+      --verbose create avd \
+      --force \
+      --name "{{ emulator_name }}" \
+      --package "{{ system_image_name }}"
+      --tag "{{ system_tag }}" \
+      --abi "{{ system_abi }}"
